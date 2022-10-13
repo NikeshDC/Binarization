@@ -1,12 +1,23 @@
 public class Image
 {
-    public short[][] image;
-    private int sizex;
-    private int sizey;
+    public short[][] pixel;
+    protected int sizeX;
+    protected int sizeY;
+    protected byte bitDepth;
     public Image(int _sizex,int _sizey)
     {
-        sizex = _sizex;
-        sizey = _sizey;
-        image = new short[sizex][sizey];
+        sizeX = _sizex;
+        sizeY = _sizey;
+        pixel = new short[sizeX][sizeY];
+    }
+    
+    public int getWidth()
+    {
+        return sizeX;
+    }
+    
+    public int getHeight()
+    {
+        return sizeY;
     }
 }
