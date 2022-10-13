@@ -22,6 +22,12 @@ public class OCR
                 w = _windowSize;
             }
             
+            public void setParam(float _k, int _w)
+            {
+                k = _k;
+                w = _w;
+            }
+            
             public void binarize()
             {
                 binarizedImage = new Image(image.getWidth(), image.getHeight());
