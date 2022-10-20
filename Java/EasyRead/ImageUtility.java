@@ -29,12 +29,12 @@ public class ImageUtility
             for(int j=0; j<image.getHeight(); j++)
             {
                 int pix;
-                short r,g,b, gray;
+                int r,g,b, gray;
                 pix = bimage.getRGB(i,j);
-                r = (short)((pix>>16) & 0x000000ff);
-                g = (short)((pix>>8) & 0x000000ff);
-                b = (short)((pix) & 0x000000ff);
-                gray = (short)(0.21 * r + 0.72 * g + 0.07 * b);
+                r = ((pix>>16) & 0x000000ff);
+                g = ((pix>>8) & 0x000000ff);
+                b = ((pix) & 0x000000ff);
+                gray = (int)(0.21 * r + 0.72 * g + 0.07 * b);
                 image.pixel[i][j] = gray;
             }
         return image;
@@ -51,9 +51,9 @@ public class ImageUtility
                 for(int j=0; j<image.getHeight(); j++)
                 {
                     if(image.pixel[i][j] == 0)
-                        bimage.setRGB(i,j, 0xffffffff);
+                        bimage.setRGB(i,j, 0xffffffff);//white pixel
                     else
-                        bimage.setRGB(i,j, 0x000000);
+                        bimage.setRGB(i,j, 0x000000);//black pixel
                     //bimage.setRGB(i,j, image.pixel[i][j]);
                 }
         }
