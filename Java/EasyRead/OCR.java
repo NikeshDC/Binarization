@@ -33,7 +33,7 @@ public class OCR
                 binarizedImage = new Image(image.getWidth(), image.getHeight());
                 int threshold;
                 int mean;   //mean centered around a window of size w
-                float sd;    //standard deviation centered around a window of size w
+                double sd;    //standard deviation centered around a window of size w
                 int R = 128;  //dynamic range of standartd deviation
                 ImageWindow imageWindow = new ImageWindow(image, w);
                 
@@ -43,7 +43,7 @@ public class OCR
                     for(int j=0; j < image.getHeight(); j++)
                     {
                         mean = imageWindow.mean(i, j);
-                        sd = (float) Math.sqrt(imageWindow.variance(i, j, mean));
+                        sd =  Math.sqrt(imageWindow.variance(i, j, mean));
                         threshold = (int) (mean * (1 + k *(sd/R - 1)));
                         if (image.pixel[i][j] < threshold)
                             {binarizedImage.pixel[i][j] = 1;}
@@ -53,12 +53,12 @@ public class OCR
                 }
             }
             
-            public void binarize(int secondaryMean)
-            {
+            public void binarize(int secondaryMean, float weight)
+            {//weight ranges from 0 to 1f
                 binarizedImage = new Image(image.getWidth(), image.getHeight());
                 int threshold;
                 int mean;   //mean centered around a window of size w
-                float sd;    //standard deviation centered around a window of size w
+                double sd;    //standard deviation centered around a window of size w
                 int R = 128;  //dynamic range of standartd deviation
                 ImageWindow imageWindow = new ImageWindow(image, w);
                 
@@ -68,9 +68,9 @@ public class OCR
                     for(int j=0; j < image.getHeight(); j++)
                     {
                         mean = imageWindow.mean(i, j);
-                        sd = (float) Math.sqrt(imageWindow.variance(i, j, mean));
+                        sd =  Math.sqrt(imageWindow.variance(i, j, mean));
                         threshold = (int) (mean * (1 + k *(sd/R - 1)));
-                        threshold = (threshold + secondaryMean)/2;
+                        threshold = (int)(threshold * (1 - weight) + secondaryMean * weight);
                         if (image.pixel[i][j] < threshold)
                             {binarizedImage.pixel[i][j] = 1;}
                         else
