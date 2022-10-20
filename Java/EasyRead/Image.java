@@ -1,6 +1,6 @@
 public class Image
 {
-    public short[][] pixel;
+    public int[][] pixel;
     protected int sizeX;
     protected int sizeY;
     protected byte bitDepth;
