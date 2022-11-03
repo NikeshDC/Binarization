@@ -2,10 +2,10 @@ import java.io.File;
 
 public class DatasetPreparer
 {
-    public static void main(String[] args)
+    public static void test()
     {
-        String outputDirectoryName = "outputs";
-        String inputDirectoryName = "inputs";
+        String outputDirectoryName = "outputsDIBCO2018";
+        String inputDirectoryName = "inputsDIBCO2018";
         //String imagepath = args[0];
         File inputdir = new File(inputDirectoryName);
         
@@ -31,10 +31,10 @@ public class DatasetPreparer
         String wName = "w";
         String outFormat = "jpg";
         
-        int step_w = 5;
-        int min_w = 5;
-        int max_w = 50;
-        float step_k = 0.05f;
+        int step_w = 10;
+        int min_w = 10;
+        int max_w = 100;
+        float step_k = 0.1f;
         float min_k = 0f;
         float max_k = 1f;
         
@@ -61,17 +61,13 @@ public class DatasetPreparer
                 {
                     sauv.setParam(k, w);
                     sauv.binarize();
-                    outFileName = outputDirectoryName + "/" + fileName + infoSeperator + sauvolaFileName + infoSeperator + kName + 
-                    String.format("%.02f", k)+ infoSeperator + wName + w + "." + outFormat;
+                    outFileName = outputDirectoryName + "/" + fileName + infoSeperator + sauvolaFileName + infoSeperator + wName + w 
+                    + infoSeperator + kName + String.format("%.02f", k)+"." + outFormat;
                     ImageUtility.writeImage(sauv.binarizedImage, outFileName, outFormat, true);
                 }
             }
              
             //sauv.binarize(otsu.threshold);
         }
-        
-        
-        
-        
     }
 }
