@@ -1,3 +1,5 @@
+//import javax.imageio.ImageReader;
+
 public class Image
 {
     public int[][] pixel;
@@ -8,7 +10,7 @@ public class Image
     {
         sizeX = _sizex;
         sizeY = _sizey;
-        pixel = new short[sizeX][sizeY];
+        pixel = new int[sizeX][sizeY];
     }
     
     public int getWidth()
