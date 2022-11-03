@@ -17,8 +17,45 @@
             image = _image;
             integralImage = new IntegralImage(image);
             sqrIntegralImage = new SqrIntegralImage(image);
-            windowSide = _windowSize / 2;  //number of pixels to any side of the center pixel
-            //_windowSize must atleast be 2
+            windowSide = (_windowSize - 1) / 2;  //number of pixels to any side of the center pixel
+            //_windowSize must atleast be 3
+        }
+        
+        public ImageWindow(Image _image, int _windowSize, boolean calcSqr)
+        {
+            image = _image;
+            integralImage = new IntegralImage(image);
+            if(calcSqr)
+                sqrIntegralImage = new SqrIntegralImage(image);
+            windowSide = (_windowSize - 1) / 2;  //number of pixels to any side of the center pixel
+            //_windowSize must atleast be 3
+        }
+        
+        public int maxBinarized(int x, int y)
+        {
+            //maximum for binarized image
+            if(sum(x,y) > 0) //if any element is greater than zero max is 1
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+        
+        public int minBinarized(int x, int y)
+        {
+            //maximum for binarized image
+            int s = sum(x,y);
+            if( s < noOfPixels) //if any element is greater than zero max is 1
+            {
+                return 0;
+            }
+            else
+            {
+                return 1;
+            }
         }
         
         public int sum(int x, int y)
@@ -26,10 +63,10 @@
             //actual window size may be smaller than the specified window size at the image borders as there may not be enough pixels for the window
             //int wxs, wxs_clamped, wxe, wys, wys_clamped, wye; //starting and ending xy coordinate positions for the actual window; wxs = window start postion for x axis
             wxs = x-windowSide - 1;
-            wxs_clamped = Math.max(wxs, 0);  //starting point for actual window
+            wxs_clamped = Math.max(wxs, -1);  //starting point for actual window
             wxe = Math.min(x+windowSide, image.sizeX - 1);
             wys = y-windowSide - 1;
-            wxs_clamped = Math.max(wxs, 0);
+            wys_clamped = Math.max(wys, -1);
             wye = Math.min(y+windowSide, image.sizeY - 1);
             
             //int wl; //sum of pixels to left of the window to subtract to obtain the sum of window using integral image
@@ -94,17 +131,27 @@
             return sum(x, y) / noOfPixels;
         }
         
+        public int getImageMean()
+        {//return the mean of whole image
+            return (integralImage.pixel[image.sizeX - 1][image.sizeY - 1] / (image.sizeX * image.sizeY));
+        }
+        
         public int variance(int x, int y, int _mean)
         {//return variance of pixels centered around (x,y) in the image using integralImage and sqrIntegralImage
             //int wxs, wxe, wys, wye; //starting and ending xy coordinate positions; wxs = window start postion for x axis
             //int _mean = mean(x,y); mean has been already supplied in parameter itself 
-            return ((sqrSum(x, y) - noOfPixels * _mean * _mean) / (noOfPixels));
+            return (sqrSum(x, y)/noOfPixels - _mean * _mean);
+        }
+        
+        public int getImageVariance(int _mean)
+        {
+            return (sqrIntegralImage.pixel[image.sizeX - 1][image.sizeY - 1]/(image.sizeX * image.sizeY) - _mean * _mean);
         }
         
         public int variance(int x, int y)
         {//return variance of pixels centered around (x,y) in the image using integralImage and sqrIntegralImage
             //int wxs, wxe, wys, wye; //starting and ending xy coordinate positions; wxs = window start postion for x axis
             int _mean = mean(x,y);
-            return ((sqrSum(x, y) - noOfPixels * _mean * _mean) / (noOfPixels));
+            return (sqrSum(x, y)/noOfPixels - _mean * _mean);
         }
     }
