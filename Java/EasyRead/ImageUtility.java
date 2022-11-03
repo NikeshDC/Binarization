@@ -10,6 +10,112 @@ public class ImageUtility
         File file = new File(filepath);
         return readImage(file);
     }
+    
+    public static int findMaxPixelValue(Image img)
+    {
+        int max = 0;   //8-bit depth image
+        for(int i=0; i<img.getWidth(); i++)
+            for(int j=0; j<img.getHeight(); j++)
+            {
+                if(max < img.pixel[i][j])
+                    max = img.pixel[i][j];
+            }
+        return max;
+    }
+    
+    public static int findMinPixelValue(Image img)
+    {
+        int min = 255;  //8-bit depth image
+        for(int i=0; i<img.getWidth(); i++)
+            for(int j=0; j<img.getHeight(); j++)
+            {
+                if(min >  img.pixel[i][j])
+                    min = img.pixel[i][j];
+            }
+        return min;
+    }
+    
+    public static Image enhanceText(Image img, int imageMean, int imageSD)
+    {//sd- standard deviation of the whole image
+        Image enhancedImg = new Image(img.getWidth(), img.getHeight());
+        //perform enhancement*********************************************************************************************************
+        int Na = 9;
+        int Imax = findMaxPixelValue(img);  //maximum intensity of pixel
+        int Imin = findMinPixelValue(img);  //minimum intensity of pixel
+        
+        int Fseg = Imin + (Imax - Imin)/Na;   //first segment (text segment) largest value
+        int Lseg = Imin + (Imax - Imin)/Na;   //last segment (background) smallest value
+        
+        for(int i=0; i< img.getWidth(); i++)
+        {
+            for(int j=0; j<img.getHeight(); j++)
+            {
+                //segmentation into first or last segments
+                if(img.pixel[i][j] < Fseg)
+                    enhancedImg.pixel[i][j] = 0;   //intensity value for text pixels
+                else if(img.pixel[i][j] > Lseg)
+                    enhancedImg.pixel[i][j] = imageMean;
+                else
+                    enhancedImg.pixel[i][j] = img.pixel[i][j];
+                    
+                //uniform illumination
+                if(enhancedImg.pixel[i][j] >= (imageMean - imageSD/2) && enhancedImg.pixel[i][j] <= (imageMean + imageSD/2))
+                    enhancedImg.pixel[i][j] = imageMean;
+            }
+        }
+        
+        return enhancedImg;
+    }
+    
+    public static Image dilate(Image img, int windowSize)
+    {
+        Image dilatedImg = new Image(img.getWidth(), img.getHeight());
+        //perform dilation
+        ImageWindow imgWin = new ImageWindow(img, windowSize, false);
+        for(int i=0; i<img.getWidth(); i++)
+            for(int j=0; j<img.getHeight(); j++)
+                dilatedImg.pixel[i][j] = imgWin.maxBinarized(i, j);
+                
+        return dilatedImg;
+    }
+    
+    public static Image dilate(Image img, int windowSize, ImageWindow imgWin)
+    {
+        Image dilatedImg = new Image(img.getWidth(), img.getHeight());
+        //perform dilation
+        //ImageWindow imgWin = new ImageWindow(img, windowSize, false);
+        for(int i=0; i<img.getWidth(); i++)
+            for(int j=0; j<img.getHeight(); j++)
+                dilatedImg.pixel[i][j] = imgWin.maxBinarized(i, j);
+                
+        return dilatedImg;
+    }
+    
+    public static Image erode(Image img, int windowSize)
+    {
+        Image erodedImg = new Image(img.getWidth(), img.getHeight());
+        //perform dilation
+        ImageWindow imgWin = new ImageWindow(img, windowSize, false);
+        for(int i=0; i<img.getWidth(); i++)
+            for(int j=0; j<img.getHeight(); j++)
+                erodedImg.pixel[i][j] = imgWin.minBinarized(i, j);
+                
+        return erodedImg;
+    }
+    
+    public static Image erode(Image img, int windowSize, ImageWindow imgWin)
+    {
+        Image erodedImg = new Image(img.getWidth(), img.getHeight());
+        //perform dilation
+        //ImageWindow imgWin = new ImageWindow(img, windowSize, false);
+        for(int i=0; i<img.getWidth(); i++)
+            for(int j=0; j<img.getHeight(); j++)
+                erodedImg.pixel[i][j] = imgWin.minBinarized(i, j);
+                
+        return erodedImg;
+    }
+    
+    
     public static Image readImage(File file)
     {
         //read from image file and return it
@@ -34,7 +140,7 @@ public class ImageUtility
                 r = ((pix>>16) & 0x000000ff);
                 g = ((pix>>8) & 0x000000ff);
                 b = ((pix) & 0x000000ff);
-                gray = (int)(0.21 * r + 0.72 * g + 0.07 * b);
+                gray = (int)(0.33 * r + 0.33 * g + 0.33 * b);    //grayscale conversion
                 image.pixel[i][j] = gray;
             }
         return image;
