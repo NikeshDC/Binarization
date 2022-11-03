@@ -53,6 +53,31 @@ public class OCR
                 }
             }
             
+            public void binarize(ImageWindow imageWindow)
+            {
+                binarizedImage = new Image(image.getWidth(), image.getHeight());
+                int threshold;
+                int mean;   //mean centered around a window of size w
+                double sd;    //standard deviation centered around a window of size w
+                int R = 128;  //dynamic range of standartd deviation
+                //ImageWindow imageWindow = new ImageWindow(image, w);
+                
+                //for every pixel in image calculate threshold value and compare to assign binarization
+                for (int i=0; i < image.getWidth(); i++)
+                {
+                    for(int j=0; j < image.getHeight(); j++)
+                    {
+                        mean = imageWindow.mean(i, j);
+                        sd =  Math.sqrt(imageWindow.variance(i, j, mean));
+                        threshold = (int) (mean * (1 + k *(sd/R - 1)));
+                        if (image.pixel[i][j] < threshold)
+                            {binarizedImage.pixel[i][j] = 1;}
+                        else
+                            {binarizedImage.pixel[i][j] = 0;}
+                    }
+                }
+            }
+            
             public void binarize(int secondaryMean, float weight)
             {//weight ranges from 0 to 1f
                 binarizedImage = new Image(image.getWidth(), image.getHeight());
@@ -68,9 +93,10 @@ public class OCR
                     for(int j=0; j < image.getHeight(); j++)
                     {
                         mean = imageWindow.mean(i, j);
+                        mean = (int)(mean * (1 - weight) + secondaryMean * weight);
                         sd =  Math.sqrt(imageWindow.variance(i, j, mean));
                         threshold = (int) (mean * (1 + k *(sd/R - 1)));
-                        threshold = (int)(threshold * (1 - weight) + secondaryMean * weight);
+                        //threshold = (int)(threshold *  + );
                         if (image.pixel[i][j] < threshold)
                             {binarizedImage.pixel[i][j] = 1;}
                         else
