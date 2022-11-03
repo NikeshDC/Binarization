@@ -1,4 +1,3 @@
-
     public class SqrIntegralImage extends IntegralImage
     {
         public SqrIntegralImage(Image _image)
